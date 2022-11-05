@@ -1,23 +1,83 @@
 {% extends "base.html" %}
 {%load humanize %}
+
+
+{% block "head" %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}
+
 {% block "content" %}
-
-
-<div class="flex flex-col mx-2">
+<div class="flex flex-col m-2">
     <h1 class="text-xl">Today is <span class="underline decoration-dashed">{{ date|date:"Y-m-d" }}</span> </h1>
-    <ul>
-        <li>I generated <span class="underline decoration-dashed font-bold">{{ kwh }} kWh</span> today and <span class="underline decoration-dashed font-bold">{{ all_time_kwh }}  kWh</span> since installing solar.</li>
-        {% for battery in batteries %}
-            <li>My battery holds <span class="underline decoration-dashed  font-bold">{{ battery.capacity }} kWh</span> of sunlight and is <span class="underline decoration-dashed font-bold">{{ battery.current_charge }}%</span> full.</li>
-        {% endfor %}
-        <li>I pushed <span class="underline decoration-dashed font-bold">{{ selling.kwh }} kWh</span> onto the grid for <span class="underline decoration-dashed font-bold">¥{{ selling.price }}</span> and bought <span class="underline decoration-dashed font-bold">{{ buying }}kWh</span> of renewable electricity from <a href="https://octopusenergy.co.jp/friend/wind-tiger-602" class="underline decoration-dotted font-bold">Octopus Energy</a>.</li>
-    </ul>
-    <h1 class="text-xl">In other words, that's</h1>
-    <ul>
-        <li><span class="underline decoration-dashed font-bold">{{ factoids.coffee_total|intcomma }} cups</span> of coffee!</li>
-        <li><span class="underline decoration-dashed font-bold">{{ factoids.tesla_km|intcomma }} kms</span> driven in a Tesla Model 3!</li>
-    </ul>
+    <div class="flex">
+        <div class="w-1/2 mr-2 text-sm">
+            <ul>
+                <li>I generated <span class="underline decoration-dashed font-bold">{{ kwh }} kWh</span> today and <span class="underline decoration-dashed font-bold">{{ all_time_kwh }}  kWh</span> since installing solar.</li>
+                {% for battery in batteries %}
+                    <li>My battery holds <span class="underline decoration-dashed  font-bold">{{ battery.capacity }} kWh</span> of sunlight and is <span class="underline decoration-dashed font-bold">{{ battery.current_charge }}%</span> full.</li>
+                {% endfor %}
+                <li>I pushed <span class="underline decoration-dashed font-bold">{{ selling.kwh }} kWh</span> onto the grid for <span class="underline decoration-dashed font-bold">¥{{ selling.price }}</span> and bought <span class="underline decoration-dashed font-bold">{{ buying }}kWh</span> of renewable electricity from <a href="https://octopusenergy.co.jp/friend/wind-tiger-602" class="underline decoration-dotted font-bold">Octopus Energy</a>.</li>
+            </ul>
+            <div class="ml-2 text-white">
+                <canvas id="solarChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        <div class="w-1/2 text-sm">
+            <h1 class="text-xl">In other words, that's</h1>
+            <ul>
+                <li><span class="underline decoration-dashed font-bold">{{ factoids.coffee_total|intcomma }} cups</span> of coffee!</li>
+                <li><span class="underline decoration-dashed font-bold">{{ factoids.tesla_km|intcomma }} kms</span> driven in a Tesla Model 3!</li>
+            </ul>
+        </div>
+    </div>
 </div>
 
+
+<script>
+    const ctx = document.getElementById('solarChart');
+
+    async function drawChart() {
+        const response = await fetch("/api/v1/generation_line_chart/");
+        const data = await response.json();
+        const generationChart = new Chart(ctx, {
+            type: "line",
+            options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Solar Generation',
+                    color: "#000",
+                },
+                 legend: {
+                    display: true,
+                     position: "bottom",
+                    labels: {
+                        color: "#000"
+                    }
+                }
+            }
+            },
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        ... data.today,
+                        fill: true,
+                        borderColor: "#FF3",
+                        pointRadius: 0,
+                    },
+                    {
+                        ... data.yesterday,
+                        fill: true,
+                        borderColor: "#FFA",
+                        pointRadius: 0,
+                    },
+                ],
+            },
+        });
+    }
+
+    drawChart();
+</script>
 
 {% endblock %}

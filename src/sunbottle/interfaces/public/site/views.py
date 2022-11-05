@@ -14,6 +14,7 @@ class Index(generic.TemplateView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         today = timezone.now().date()
+
         sold_kwh = queries.get_selling_for_date(today).normalize()
         total_kwh = queries.get_total_generation()
         context_data.update(

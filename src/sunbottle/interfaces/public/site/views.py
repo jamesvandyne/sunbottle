@@ -2,7 +2,6 @@ from django.conf import settings
 from django.utils import timezone
 from django.views import generic
 
-from sunbottle.data.electricity import models
 from sunbottle.domain.electricity import queries
 
 

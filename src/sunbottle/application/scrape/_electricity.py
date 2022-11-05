@@ -76,11 +76,19 @@ def scrape_everything(date: Optional[datetime.date]) -> None:
 
     buysell_readings = buysell_retriever.retrieve(browser=browser, date=date)
     electricity_ops.record_buy_sell_readings(buysell_readings)
+
+    _cleanup_browser(browser)
+
+
+def _cleanup_browser(browser: webdriver.Firefox) -> None:
+    """
+    Close the browser and quit the web driver
+    """
+    browser.close()
     browser.quit()
 
 
 def _get_browser() -> webdriver.Firefox:
     service = FirefoxService(executable_path=GeckoDriverManager(path=settings.WEBDRIVER_INSTALL_PATH).install())
-
     driver = webdriver.Firefox(service=service)
     return driver

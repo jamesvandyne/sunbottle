@@ -19,6 +19,14 @@ def get_generation_for_date(date: datetime.date) -> decimal.Decimal:
     )["total"] or decimal.Decimal("0.0")
 
 
+def get_generation_series_for_date(date: datetime.date, exclude_future: bool = False) -> list[decimal.Decimal]:
+    qs = electricity_models.GenerationReading.objects.filter(occurred_at__date=date).order_by("occurred_at")
+    if exclude_future:
+        now = datetime.datetime.now()
+        qs = qs.exclude(occurred_at__gt=now)
+    return qs.values_list("kwh", flat=True)
+
+
 def get_generators() -> list[electricity_models.Generator]:
     return list(electricity_models.Generator.objects.all())
 

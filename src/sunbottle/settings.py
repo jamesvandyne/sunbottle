@@ -87,7 +87,7 @@ WSGI_APPLICATION = "sunbottle.interfaces.public.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "/opt/sunbottle/data/db.sqlite3",
+        "NAME": env.str("DB_NAME", default="/opt/sunbottle/data/db.sqlite3"),
     }
 }
 

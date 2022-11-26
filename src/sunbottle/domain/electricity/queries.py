@@ -2,7 +2,6 @@ import datetime
 import decimal
 
 from django.db import models
-from django.utils import timezone
 
 from sunbottle.data.electricity import models as electricity_models
 

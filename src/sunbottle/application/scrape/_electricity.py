@@ -12,7 +12,6 @@ from sunbottle.domain.electricity import buysell, generation
 from sunbottle.domain.electricity import operations as electricity_ops
 from sunbottle.domain.electricity import queries, storage
 
-
 logger = logging.getLogger(__name__)
 
 

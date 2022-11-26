@@ -1,4 +1,5 @@
 import datetime
+import logging
 from typing import Optional
 
 from django.conf import settings
@@ -10,6 +11,9 @@ from sunbottle.data.electricity import models as electricity_models
 from sunbottle.domain.electricity import buysell, generation
 from sunbottle.domain.electricity import operations as electricity_ops
 from sunbottle.domain.electricity import queries, storage
+
+
+logger = logging.getLogger(__name__)
 
 
 def scrape_generation(generator: electricity_models.Generator, date: Optional[datetime.date] = None) -> None:
@@ -58,11 +62,21 @@ def scrape_everything(date: Optional[datetime.date]) -> None:
     """
     Scrapes all generation, storage, and buy sell data.
     """
+
+    browser = _get_browser()
+
+    try:
+        _scrape_everything(browser, date)
+    except Exception as e:
+        logger.exception("Error scarping %s" % e)
+
+    _cleanup_browser(browser)
+
+
+def _scrape_everything(browser: webdriver.Firefox, date: Optional[datetime.date]) -> None:
     generation_retriever = generation.get_generation_retriever()
     storage_retriever = storage.get_storage_retriever()
     buysell_retriever = buysell.get_buysell_retriever()
-
-    browser = _get_browser()
 
     # Record generation readings
     for generator in queries.get_generators():
@@ -76,8 +90,6 @@ def scrape_everything(date: Optional[datetime.date]) -> None:
 
     buysell_readings = buysell_retriever.retrieve(browser=browser, date=date)
     electricity_ops.record_buy_sell_readings(buysell_readings)
-
-    _cleanup_browser(browser)
 
 
 def _cleanup_browser(browser: webdriver.Firefox) -> None:

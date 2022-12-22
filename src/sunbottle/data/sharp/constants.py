@@ -4,3 +4,4 @@ GENERATION_URL = "https://hems.cloudlabs.sharp.co.jp/cloudhems/pvt/A121641000.ht
 STORAGE_URL = "https://hems.cloudlabs.sharp.co.jp/cloudhems/pvt/A121642000.htm"
 CHANGE_URL = "https://hems.cloudlabs.sharp.co.jp/cloudhems/pvt/A121641100.htm"
 BUY_SELL_POWER_URL = "https://hems.cloudlabs.sharp.co.jp/cloudhems/pvt/A121641003.htm"
+CONSUMPTION_URL = "https://hems.cloudlabs.sharp.co.jp/cloudhems/pvt/A121610000.htm"

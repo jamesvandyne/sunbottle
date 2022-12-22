@@ -8,7 +8,7 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
 
 from sunbottle.data.electricity import models as electricity_models
-from sunbottle.domain.electricity import buysell, generation
+from sunbottle.domain.electricity import buysell, generation, consumption
 from sunbottle.domain.electricity import operations as electricity_ops
 from sunbottle.domain.electricity import queries, storage
 
@@ -57,6 +57,20 @@ def scrape_buysell(date: Optional[datetime.date] = None) -> None:
     browser.quit()
 
 
+def scrape_consumption(date: Optional[datetime.date] = None) -> None:
+    """
+    Scrapes consumption information.
+    """
+    retriever = consumption.get_consumption_retriever()
+    browser = _get_browser()
+
+    # Record consumption readings
+    readings = retriever.retrieve(browser=browser, date=date)
+    electricity_ops.record_consumption_readings(readings)
+
+    _cleanup_browser(browser)
+
+
 def scrape_everything(date: Optional[datetime.date]) -> None:
     """
     Scrapes all generation, storage, and buy sell data.
@@ -76,6 +90,7 @@ def _scrape_everything(browser: webdriver.Firefox, date: Optional[datetime.date]
     generation_retriever = generation.get_generation_retriever()
     storage_retriever = storage.get_storage_retriever()
     buysell_retriever = buysell.get_buysell_retriever()
+    consumption_retreiver = consumption.get_consumption_retriever()
 
     # Record generation readings
     for generator in queries.get_generators():
@@ -89,6 +104,9 @@ def _scrape_everything(browser: webdriver.Firefox, date: Optional[datetime.date]
 
     buysell_readings = buysell_retriever.retrieve(browser=browser, date=date)
     electricity_ops.record_buy_sell_readings(buysell_readings)
+
+    consumption_readings = consumption_retreiver.retrieve(browser=browser, date=date)
+    electricity_ops.record_consumption_readings(consumption_readings)
 
 
 def _cleanup_browser(browser: webdriver.Firefox) -> None:

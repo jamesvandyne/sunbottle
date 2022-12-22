@@ -5,7 +5,7 @@ from typing import Union
 from django.db import transaction
 
 from sunbottle.data.electricity import models
-from sunbottle.domain.electricity import buysell, generation, storage, consumption
+from sunbottle.domain.electricity import buysell, consumption, generation, storage
 
 
 @transaction.atomic

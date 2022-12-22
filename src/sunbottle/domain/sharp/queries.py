@@ -5,7 +5,7 @@ import decimal
 from collections import deque
 from typing import Optional, Union
 
-from sunbottle.domain.electricity import buysell, generation, storage, consumption
+from sunbottle.domain.electricity import buysell, consumption, generation, storage
 
 
 def sharp_generation_to_reading(

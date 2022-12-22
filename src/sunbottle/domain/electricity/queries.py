@@ -72,3 +72,10 @@ def get_tesla_km_for_kwh(kwh: decimal.Decimal | None) -> decimal.Decimal:
 
 def kwh_to_wh(kwh: decimal.Decimal) -> decimal.Decimal:
     return kwh * 1000
+
+
+def get_consumption_for_date(date: datetime.date) -> decimal.Decimal:
+    return electricity_models.ConsumptionReading.objects.filter(occurred_at__date=date).aggregate(
+        total=models.Sum("kwh")
+    )["total"] or decimal.Decimal("0.0")
+

@@ -31,8 +31,8 @@ class Index(generic.TemplateView):
                     "price": sold_kwh * settings.FIT,
                 },
                 "consumption": {
-                    "yesterday": queries.get_consumption_for_date(yesteday),
-                    "today": queries.get_consumption_for_date(today)
+                    "yesterday": queries.get_consumption_for_date(yesteday).normalize(),
+                    "today": queries.get_consumption_for_date(today).normalize(),
                 },
                 "batteries": self.serialize_battery_summaries(),
                 "all_time_kwh": total_kwh.normalize().quantize(10),

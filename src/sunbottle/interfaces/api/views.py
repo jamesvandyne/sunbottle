@@ -11,9 +11,9 @@ from . import serializers
 
 def get_generation_line_graph(request: http.HttpRequest) -> http.JsonResponse:
     today = timezone.now().date()
-    yesteday = today - datetime.timedelta(days=1)
+    yesterday = today - datetime.timedelta(days=1)
 
-    generation = queries.get_generation_series_for_date(yesteday)
+    generation = queries.get_generation_series_for_date(yesterday)
     generation_today = queries.get_generation_series_for_date(today, exclude_future=True)
     data = serializers.LineGraphData(
         data={
@@ -23,6 +23,19 @@ def get_generation_line_graph(request: http.HttpRequest) -> http.JsonResponse:
                 "data": list(generation),
             },
             "today": {"label": "Today", "data": list(generation_today)},
+        }
+    )
+    if data.is_valid():
+        return http.JsonResponse(data=data.validated_data)
+    return http.JsonResponse(data={"error": data.errors})
+
+
+def get_generation_summary(request: http.HttpRequest) -> http.JsonResponse:
+    today = timezone.now().date()
+    data = serializers.GenerationSummary(
+        data={
+            "total_generation": queries.get_total_generation(),
+            "today_generation": queries.get_generation_for_date(today),
         }
     )
     if data.is_valid():

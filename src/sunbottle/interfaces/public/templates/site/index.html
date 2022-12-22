@@ -17,6 +17,7 @@
                     <li>My battery holds <span class="underline decoration-dashed  font-bold">{{ battery.capacity }} kWh</span> of sunlight and is <span class="underline decoration-dashed font-bold">{{ battery.current_charge }}%</span> full.</li>
                 {% endfor %}
                 <li>I pushed <span class="underline decoration-dashed font-bold">{{ selling.kwh }} kWh</span> onto the grid for <span class="underline decoration-dashed font-bold">¥{{ selling.price }}</span> and bought <span class="underline decoration-dashed font-bold">{{ buying }}kWh</span> of renewable electricity from <a href="https://octopusenergy.co.jp/friend/wind-tiger-602" class="underline decoration-dotted font-bold">Octopus Energy</a>.</li>
+                <li>Yesterday I consumed <span class="underline decoration-dashed font-bold">{{ consumption.yesterday }} kWh</span> total.</li>
             </ul>
             <div class="ml-2 text-white">
                 <canvas id="solarChart" width="400" height="200"></canvas>

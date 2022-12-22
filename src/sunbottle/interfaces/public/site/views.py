@@ -1,3 +1,5 @@
+import datetime
+
 from django.conf import settings
 from django.utils import timezone
 from django.views import generic
@@ -14,6 +16,7 @@ class Index(generic.TemplateView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         today = timezone.now().date()
+        yesteday = today - datetime.timedelta(days=1)
 
         sold_kwh = queries.get_selling_for_date(today).normalize()
         total_kwh = queries.get_total_generation()
@@ -26,6 +29,10 @@ class Index(generic.TemplateView):
                     "kwh": sold_kwh,
                     "fit": settings.FIT,
                     "price": sold_kwh * settings.FIT,
+                },
+                "consumption": {
+                    "yesterday": queries.get_consumption_for_date(yesteday),
+                    "today": queries.get_consumption_for_date(today)
                 },
                 "batteries": self.serialize_battery_summaries(),
                 "all_time_kwh": total_kwh.normalize().quantize(10),

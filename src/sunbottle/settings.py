@@ -143,7 +143,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 GENERATION_RETRIEVER_CLASS = "sunbottle.domain.sharp.generation.SharpGenerationRetriever"
 STORAGE_RETRIEVER_CLASS = "sunbottle.domain.sharp.storage.SharpStorageRetriever"
 BUYSELL_RETRIEVER_CLASS = "sunbottle.domain.sharp.buysell.SharpBuySellRetriever"
-
+CONSUMPTION_RETRIEVER_CLASS = "sunbottle.domain.sharp.consumption.SharpConsumptionRetriever"
 
 WEBDRIVER_INSTALL_PATH = env.str("WEBDRIVER_INSTALL_PATH", default="/opt/sunbottle/")
 SHARP_LOGIN_MEMBERID = env.str("SHARP_LOGIN_MEMBERID", default="")

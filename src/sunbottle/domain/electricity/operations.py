@@ -5,7 +5,7 @@ from typing import Union
 from django.db import transaction
 
 from sunbottle.data.electricity import models
-from sunbottle.domain.electricity import buysell, generation, storage
+from sunbottle.domain.electricity import buysell, generation, storage, consumption
 
 
 @transaction.atomic
@@ -45,3 +45,12 @@ def record_buy_sell_readings(readings: list[Union[buysell.BuyReading, buysell.Se
             occurred_at=reading.occurred_at,
             defaults={"kwh": reading.kwh},
         )
+
+
+@transaction.atomic
+def record_consumption_readings(readings: list[consumption.ConsumptionReading]) -> None:
+    """
+    Save a series of consumption readings.
+    """
+    for reading in readings:
+        models.ConsumptionReading.objects.update_or_create(occurred_at=reading.occurred_at, kwh=reading.kwh)

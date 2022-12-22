@@ -23,3 +23,8 @@ class LineGraph(serializers.Serializer):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.fields["type"] = serializers.CharField(default="line")
+
+
+class GenerationSummary(serializers.Serializer):
+    total_generation = NormalizedDecimalField(max_digits=10, decimal_places=3, required=True)
+    today_generation = NormalizedDecimalField(max_digits=10, decimal_places=3, required=True)

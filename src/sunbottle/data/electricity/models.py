@@ -92,3 +92,17 @@ class ElectricitySale(models.Model):
     # Audit fields
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class ConsumptionReading(models.Model):
+    """
+    An individual consumption reading.
+    """
+
+    kwh = models.DecimalField(max_digits=6, decimal_places=3)
+
+    occurred_at = models.DateTimeField(unique=True)
+
+    # Audit fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

@@ -129,6 +129,7 @@ Next, instruct Sunbottle to use these retrievers by setting the following enviro
 $ flyctl secrets set GENERATION_RETRIEVER_CLASS=sunbottle.domain.my_system.MyGenerationRetriever
 $ flyctl secrets set STORAGE_RETRIEVER_CLASS=sunbottle.domain.my_system.MyStorageRetriever
 $ flyctl secrets set BUYSELL_RETRIEVER_CLASS=sunbottle.domain.my_system.MyBuySellRetriever
+$ flyctl secrets set CONSUMPTION_RETRIEVER_CLASS=sunbottle.domain.sharp.consumption.SharpConsumptionRetriever
 ```
 
 ## Generation
@@ -144,8 +145,8 @@ from sunbottle.domain.electricity import generation
 class MyGenerationRetriever(generation.GenerationRetriever):
     def retrieve(
         self,
-        browser: Optional[webdriver.Firefox] = None,
-        date: Optional[datetime.date] = None,
+        browser: webdriver.Firefox | None = None,
+        date: datetime.date | None = None,
     ) -> list[generation.GenerationReading]:
     ...
 ```
@@ -161,8 +162,8 @@ from sunbottle.domain.electricity import storage
 class MyStorageRetriever(storage.StorageRetriever):
     def retrieve(
         self,
-        browser: Optional[webdriver.Firefox] = None,
-        date: Optional[datetime.date] = None,
+        browser: webdriver.Firefox | None = None,
+        date: datetime.date | None = None,
     ) -> list[storage.StorageReading]:
     ...
 
@@ -179,8 +180,26 @@ from sunbottle.domain.electricity import buysell
 class MyBuySellRetriever(buysell.BuySellRetriever):
     def retrieve(
         self,
-        browser: Optional[webdriver.Firefox] = None,
-        date: Optional[datetime.date] = None,
-    ) -> list[Union[buysell.BuyReading, buysell.SellReading]]:
+        browser: webdriver.Firefox | None = None,
+        date: datetime.date | None = None,
+    ) -> list[buysell.BuyReadin | buysell.SellReading]:
     ...
+```
+
+## Consumption
+
+```python
+from selenium import webdriver
+
+from sunbottle.domain.electricity import consumption
+
+
+class SharpConsumptionRetriever(consumption.ConsumptionRetriever):
+    def retrieve(
+        self,
+        browser: webdriver.Firefox | None = None,
+        date: datetime.date | None = None,
+    ) -> list[consumption.ConsumptionReading]:
+        if not browser:
+            raise ValueError("B
 ```

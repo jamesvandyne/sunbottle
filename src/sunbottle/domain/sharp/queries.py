@@ -5,7 +5,7 @@ import decimal
 from collections import deque
 from typing import Optional, Union
 
-from sunbottle.domain.electricity import buysell, generation, storage
+from sunbottle.domain.electricity import buysell, generation, storage, consumption
 
 
 def sharp_generation_to_reading(
@@ -98,4 +98,34 @@ def sharp_buysell_to_reading(
                 kwh=decimal.Decimal(str(kwh)),
             )
         )
+    return readings
+
+
+def sharp_consumption_to_reading(
+    storage_data: list[float], date: Optional[datetime.date] = None
+) -> list[consumption.ConsumptionReading]:
+    now = datetime.datetime.now()
+    date = date or datetime.date.today()
+
+    data = deque(storage_data)
+    readings = []
+    for hour in range(0, 24):
+        for interval in [0, 15, 30, 45]:
+            consumed_at = datetime.datetime(
+                year=date.year,
+                month=date.month,
+                day=date.day,
+                hour=hour,
+                minute=interval,
+            )
+            # Skip if the data is speculative i.e. in the future.
+            if consumed_at > now:
+                continue
+            kwh = data.popleft()
+            readings.append(
+                consumption.ConsumptionReading(
+                    occurred_at=consumed_at,
+                    kwh=decimal.Decimal(str(kwh)),
+                )
+            )
     return readings

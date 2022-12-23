@@ -20,18 +20,25 @@ class Index(generic.TemplateView):
 
         sold_kwh = queries.get_selling_for_date(today).normalize()
         total_kwh = queries.get_total_generation()
+
+        yesterday_consumption = queries.get_consumption_for_date(yesteday)
+        yesterday_generation = queries.get_generation_for_date(yesteday)
+
         context_data.update(
             {
                 "date": today,
-                "kwh": queries.get_generation_for_date(today).normalize(),
                 "buying": queries.get_purchasing_for_date(today).normalize(),
                 "selling": {
                     "kwh": sold_kwh,
                     "fit": settings.FIT,
                     "price": sold_kwh * settings.FIT,
                 },
+                "generation": {
+                    "yesterday": yesterday_generation.normalize(),
+                    "today": queries.get_generation_for_date(today).normalize(),
+                },
                 "consumption": {
-                    "yesterday": queries.get_consumption_for_date(yesteday).normalize(),
+                    "yesterday": yesterday_consumption.normalize(),
                     "today": queries.get_consumption_for_date(today).normalize(),
                 },
                 "batteries": self.serialize_battery_summaries(),

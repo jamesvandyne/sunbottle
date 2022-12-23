@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import Optional
+from typing import Iterable, Optional
 
 from django.conf import settings
 from selenium import webdriver
@@ -8,7 +8,7 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
 
 from sunbottle.data.electricity import models as electricity_models
-from sunbottle.domain.electricity import buysell, generation, consumption
+from sunbottle.domain.electricity import buysell, consumption, generation
 from sunbottle.domain.electricity import operations as electricity_ops
 from sunbottle.domain.electricity import queries, storage
 
@@ -71,6 +71,22 @@ def scrape_consumption(date: Optional[datetime.date] = None) -> None:
     _cleanup_browser(browser)
 
 
+def scrape_consumption_range(start_date: datetime.date, end_date: datetime.date) -> None:
+    """
+    Scrapes consumption information.
+    """
+    retriever = consumption.get_consumption_retriever()
+    browser = _get_browser()
+
+    # Record consumption readings
+    for date in _date_range(start_date, end_date):
+        print(f"Scraping {date}")
+        readings = retriever.retrieve(browser=browser, date=date)
+        electricity_ops.record_consumption_readings(readings)
+
+    _cleanup_browser(browser)
+
+
 def scrape_everything(date: Optional[datetime.date]) -> None:
     """
     Scrapes all generation, storage, and buy sell data.
@@ -121,3 +137,8 @@ def _get_browser() -> webdriver.Firefox:
     service = FirefoxService(executable_path=GeckoDriverManager(path=settings.WEBDRIVER_INSTALL_PATH).install())
     driver = webdriver.Firefox(service=service)
     return driver
+
+
+def _date_range(start_date: datetime.date, end_date: datetime.date) -> Iterable[datetime.date]:
+    for n in range(int((end_date - start_date).days)):
+        yield start_date + datetime.timedelta(days=n)

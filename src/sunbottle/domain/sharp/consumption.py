@@ -30,7 +30,8 @@ class SharpConsumptionRetriever(consumption.ConsumptionRetriever):
             time.sleep(self._sleep_time())
 
         if date:
-            # Fetch the storage data
+            # Fetch the consumption data
+            time.sleep(self._sleep_time())
             self._select_date(browser, date)
             time.sleep(self._sleep_time())
 

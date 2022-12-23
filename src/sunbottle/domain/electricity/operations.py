@@ -53,4 +53,6 @@ def record_consumption_readings(readings: list[consumption.ConsumptionReading]) 
     Save a series of consumption readings.
     """
     for reading in readings:
-        models.ConsumptionReading.objects.update_or_create(occurred_at=reading.occurred_at, kwh=reading.kwh)
+        models.ConsumptionReading.objects.update_or_create(
+            occurred_at=reading.occurred_at, defaults={"kwh": reading.kwh}
+        )

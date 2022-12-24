@@ -31,10 +31,22 @@ class SharpGenerationRetriever(generation.GenerationRetriever):
             time.sleep(self._sleep_time())
 
         if date:
+            time.sleep(self._sleep_time())
             self._select_date(browser, date)
             time.sleep(self._sleep_time())
 
-        generation_data = browser.execute_script("return onRenderResult.object")
+        generation_data = None
+
+        for attempt in range(1, 5):
+            try:
+                generation_data = browser.execute_script("return onRenderResult.object")
+            except Exception:
+                print("Failed to get generation data. Waiting before trying again.")
+                time.sleep(attempt * 5)
+            else:
+                print("Fetched generation data.")
+                break
+
         if generation_data is None:
             return []
         return queries.sharp_generation_to_reading(generation_data, date)

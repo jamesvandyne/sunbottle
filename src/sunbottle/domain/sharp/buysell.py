@@ -30,6 +30,7 @@ class SharpBuySellRetriever(buysell.BuySellRetriever):
             time.sleep(self._sleep_time())
 
         if date:
+            time.sleep(self._sleep_time())
             self._select_date(browser, date)
             time.sleep(self._sleep_time())
 

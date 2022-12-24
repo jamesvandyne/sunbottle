@@ -31,6 +31,7 @@ class SharpStorageRetriever(storage.StorageRetriever):
 
         if date:
             # Fetch the storage data
+            time.sleep(self._sleep_time())
             self._select_date(browser, date)
             time.sleep(self._sleep_time())
 

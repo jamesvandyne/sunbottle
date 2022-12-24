@@ -37,8 +37,8 @@ def get_batteries() -> list[electricity_models.Battery]:
 def get_charge_for_battery(battery: electricity_models.Battery) -> decimal.Decimal:
     # There's a 15+ minute delay sometimes before the reading is live, so look 30 minutes into the
     # the past to prevent 0 readings from occurring often.
-    half_hour_ago = datetime.datetime.now() - datetime.timedelta(minutes=30)
-    return battery.level_readings.filter(occurred_at__lte=half_hour_ago).values_list(
+    half_hour_ago = datetime.datetime.now() - datetime.timedelta(minutes=31)
+    return battery.level_readings.filter(occurred_at__lt=half_hour_ago).values_list(
         "charge_percent", flat=True
     ).order_by("occurred_at").last() or decimal.Decimal("0.0")
 

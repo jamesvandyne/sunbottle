@@ -25,4 +25,4 @@ class Command(BaseCommand):
         except models.Battery.DoesNotExist:
             raise CommandError(f"Battery {battery_name} does not exist")
 
-        scrape_storage(battery)
+        scrape_storage(battery, date=date)

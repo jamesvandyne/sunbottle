@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import datetime
+import decimal
 from pathlib import Path
 
 from envparse import env
@@ -151,3 +152,35 @@ SHARP_LOGIN_PASSWORD = env.str("SHARP_LOGIN_PASSWORD", default="")
 
 # Feed in Tariff
 FIT = env.int("FIT", default=17)  # JPY per kWh
+
+BILLING_PERIOD_START_YEAR = env.int("BILLING_PERIOD_START_YEAR", default=2022)
+BILLING_PERIOD_START_MONTH = env.int("BILLING_PERIOD_START_MONTH", default=10)
+BILLING_PERIOD_START_DAY = env.int("BILLING_PERIOD_START_DAY", default=15)
+
+FIRST_BILLING_PERIOD_START = datetime.date(
+    BILLING_PERIOD_START_YEAR, BILLING_PERIOD_START_MONTH, BILLING_PERIOD_START_DAY
+)
+
+# TODO: Move these to the database when someone tries to use Sunbottle with a non-Octopus provider.
+FUEL_ADJUSTMENT_CHARGES: dict[datetime.date, decimal.Decimal] = {
+    datetime.date(year=2022, month=10, day=15): decimal.Decimal("9.72"),
+    datetime.date(year=2022, month=11, day=15): decimal.Decimal("11.92"),
+    datetime.date(year=2022, month=12, day=15): decimal.Decimal("12.99"),
+}
+
+RENEWABLE_ENERGY_CHARGES: dict[datetime.date, decimal.Decimal] = {
+    datetime.date(year=2022, month=10, day=15): decimal.Decimal("3.45"),
+    datetime.date(year=2022, month=11, day=15): decimal.Decimal("3.45"),
+    datetime.date(year=2022, month=12, day=15): decimal.Decimal("3.45"),
+}
+
+
+GREEN_OCTOPUS: dict[tuple[int, int | None], decimal.Decimal] = {
+    (0, 120): decimal.Decimal("19.68"),
+    (121, 300): decimal.Decimal("24.05"),
+    (301, None): decimal.Decimal("26.45"),
+}
+
+AGREEMENTS: dict[datetime.date, dict[tuple[int, int | None], decimal.Decimal]] = {
+    datetime.date(year=2022, month=10, day=15): GREEN_OCTOPUS,
+}

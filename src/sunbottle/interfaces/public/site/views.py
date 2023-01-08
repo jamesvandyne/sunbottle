@@ -61,3 +61,12 @@ class Index(generic.TemplateView):
                 }
             )
         return summaries
+
+
+class Savings(generic.TemplateView):
+    template_name = "site/savings.html"
+
+    def get_context_data(self, **kwargs) -> dict:
+        billing_periods = queries.get_billing_period_stats()
+        lifetime_savings = sum(billing_period.total_savings for billing_period in billing_periods)
+        return super().get_context_data(billing_periods=billing_periods, lifetime_savings=lifetime_savings)

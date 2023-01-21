@@ -128,7 +128,7 @@ def get_renewable_charge(date: datetime.date) -> decimal.Decimal:
     try:
         return settings.RENEWABLE_ENERGY_CHARGES[date]
     except KeyError:
-        last_renewable_charge = _get_date_before_date(date, settings.RENEWABLE_ENERGY_CHARGE.keys())
+        last_renewable_charge = _get_date_before_date(date, settings.RENEWABLE_ENERGY_CHARGES.keys())
         return settings.RENEWABLE_ENERGY_CHARGES[last_renewable_charge]
 
 
@@ -164,13 +164,16 @@ def get_base_cost(billing_period_start: datetime.date, kwh: decimal.Decimal) -> 
     tariff = get_tariff_for_date(billing_period_start)
     total_cost = decimal.Decimal("0.0")
     total_kwh = kwh
-
     for (tier_min, tier_max), price_per_kwh in reversed(tariff.items()):
         if tier_min > total_kwh:
             # Didn't use enough to reach this tier, skip calculations
             continue
         tier_max_kwh = tier_max if tier_max else total_kwh
-        tier_kwh = int(tier_max_kwh) - tier_min
+        # Ensure we use the lesser amount if usage is lower than the max of the first tier
+        if tier_min == 0 and total_kwh < tier_max_kwh:
+            tier_kwh = total_kwh
+        else:
+            tier_kwh = int(tier_max_kwh) - tier_min
         tier_cost = tier_kwh * price_per_kwh
         total_cost += tier_cost
     return total_cost
@@ -182,7 +185,8 @@ def get_total_cost(billing_period_start_date: datetime.date, kwh: decimal.Decima
     """
     fuel_adjustment_cost = get_fuel_adjustment_charge(billing_period_start_date)
     renewable_cost = get_renewable_charge(billing_period_start_date)
-
+    total_fuel_cost = fuel_adjustment_cost * kwh
+    total_renewable_cost = renewable_cost * kwh
     return sum([get_base_cost(billing_period_start_date, kwh), (fuel_adjustment_cost * kwh), (renewable_cost * kwh)])
 
 

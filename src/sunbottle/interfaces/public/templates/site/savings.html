@@ -10,7 +10,7 @@
 <div class="flex flex-col m-2">
     <h1 class="font-bold">But, is solar <em>worth</em> it?</h1>
     <p>Yes. Since installing solar I've saved <span class="underline decoration-dashed font-bold">¥{{ lifetime_savings|intcomma }}</span> in electricity costs.</p>
-    <p>Here's a berakdown for each billing period since my installation.</p>
+    <p>Here's a breakdown for each billing period since my installation.</p>
     {% for billing_period in billing_periods reversed %}
         <div class="mt-2 text-sm">
             <details>

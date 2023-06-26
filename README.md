@@ -200,6 +200,5 @@ class SharpConsumptionRetriever(consumption.ConsumptionRetriever):
         browser: webdriver.Firefox | None = None,
         date: datetime.date | None = None,
     ) -> list[consumption.ConsumptionReading]:
-        if not browser:
-            raise ValueError("B
+        ...
 ```

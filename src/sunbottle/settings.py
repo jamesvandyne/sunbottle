@@ -170,6 +170,8 @@ FUEL_ADJUSTMENT_CHARGES: dict[datetime.date, decimal.Decimal] = {
     datetime.date(year=2023, month=2, day=15): decimal.Decimal("11.69"),
     datetime.date(year=2023, month=3, day=15): decimal.Decimal("10.25"),
     datetime.date(year=2023, month=4, day=15): decimal.Decimal("9.21"),
+    datetime.date(year=2023, month=5, day=15): decimal.Decimal("7.21"),
+    datetime.date(year=2023, month=6, day=15): decimal.Decimal("6.54"),
 }
 
 RENEWABLE_ENERGY_CHARGES: dict[datetime.date, decimal.Decimal] = {
@@ -181,6 +183,8 @@ RENEWABLE_ENERGY_CHARGES: dict[datetime.date, decimal.Decimal] = {
     datetime.date(year=2023, month=3, day=15): decimal.Decimal("3.45"),
     datetime.date(year=2023, month=4, day=15): decimal.Decimal("3.45"),
     datetime.date(year=2023, month=5, day=15): decimal.Decimal("1.40"),
+    datetime.date(year=2023, month=6, day=15): decimal.Decimal("1.40"),
+    datetime.date(year=2023, month=7, day=15): decimal.Decimal("1.40"),
 }
 
 

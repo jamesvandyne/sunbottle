@@ -1,8 +1,7 @@
-import datetime
 from typing import Iterable
 
+import arrow
 from django import http
-from django.utils import timezone
 
 from sunbottle.domain.electricity import queries
 
@@ -10,11 +9,11 @@ from . import serializers
 
 
 def get_generation_line_graph(request: http.HttpRequest) -> http.JsonResponse:
-    today = timezone.now().date()
-    yesterday = today - datetime.timedelta(days=1)
+    today = arrow.now().floor("day")
+    yesterday = today.shift(days=-1)
 
-    generation = queries.get_generation_series_for_date(yesterday)
-    generation_today = queries.get_generation_series_for_date(today, exclude_future=True)
+    generation = queries.get_generation_series_for_date(yesterday.datetime)
+    generation_today = queries.get_generation_series_for_date(today.datetime, exclude_future=True)
     data = serializers.LineGraphData(
         data={
             "labels": list(_get_15_minute_interval_labels()),
@@ -31,7 +30,7 @@ def get_generation_line_graph(request: http.HttpRequest) -> http.JsonResponse:
 
 
 def get_generation_summary(request: http.HttpRequest) -> http.JsonResponse:
-    today = timezone.now().date()
+    today = arrow.now().floor("day").datetime
     data = serializers.GenerationSummary(
         data={
             "total_generation": queries.get_total_generation(),

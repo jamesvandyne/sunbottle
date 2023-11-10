@@ -11,9 +11,11 @@ from . import serializers
 def get_generation_line_graph(request: http.HttpRequest) -> http.JsonResponse:
     today = arrow.now().floor("day")
     yesterday = today.shift(days=-1)
+    today_last_year = today.shift(years=-1)
 
     generation = queries.get_generation_series_for_date(yesterday.datetime)
     generation_today = queries.get_generation_series_for_date(today.datetime, exclude_future=True)
+    generation_today_last_year = queries.get_generation_series_for_date(today_last_year.datetime)
     data = serializers.LineGraphData(
         data={
             "labels": list(_get_15_minute_interval_labels()),
@@ -22,6 +24,7 @@ def get_generation_line_graph(request: http.HttpRequest) -> http.JsonResponse:
                 "data": list(generation),
             },
             "today": {"label": "Today", "data": list(generation_today)},
+            "last_year_today": {"label": "One Year Ago Today", "data": list(generation_today_last_year)},
         }
     )
     if data.is_valid():

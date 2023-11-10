@@ -19,7 +19,10 @@
                 <li>I pushed <span class="underline decoration-dashed font-bold">{{ selling.kwh }} kWh</span> onto the grid for <span class="underline decoration-dashed font-bold">¥{{ selling.price }}</span> and bought <span class="underline decoration-dashed font-bold">{{ buying }}kWh</span> of renewable electricity from <a href="https://octopusenergy.co.jp/friend/wind-tiger-602" class="underline decoration-dotted font-bold">Octopus Energy</a>.</li>
                 <li>
                     Yesterday I consumed <span class="underline decoration-dashed font-bold">{{ consumption.yesterday }} kWh</span> and generated <span class="underline decoration-dashed font-bold">{{ generation.yesterday }} kWh</span>.
-                </li>
+                  </li>
+                  <li>
+                    This compares with <span class="underline decoration-dashed font-bold">{{ consumption.last_year }} kWh</span> consumed and <span class="underline decoration-dashed font-bold">{{ generation.last_year }} kWh</span> generated last year.
+                  </li>
             </ul>
             <div class="ml-2 text-white">
                 <canvas id="solarChart" width="400" height="200"></canvas>

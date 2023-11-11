@@ -1,7 +1,5 @@
-import datetime
-
+import arrow
 from django.conf import settings
-from django.utils import timezone
 from django.views import generic
 
 from sunbottle.domain.electricity import queries
@@ -15,19 +13,23 @@ class Index(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        today = timezone.now().date()
-        yesteday = today - datetime.timedelta(days=1)
+        today = arrow.now().floor("day")
+        yesterday = today.shift(days=-1)
+        last_year = yesterday.shift(years=-1)
 
-        sold_kwh = queries.get_selling_for_date(today).normalize()
+        sold_kwh = queries.get_selling_for_date(today.datetime).normalize()
         total_kwh = queries.get_total_generation()
 
-        yesterday_consumption = queries.get_consumption_for_date(yesteday)
-        yesterday_generation = queries.get_generation_for_date(yesteday)
+        yesterday_consumption = queries.get_consumption_for_date(yesterday.datetime)
+        yesterday_generation = queries.get_generation_for_date(yesterday.datetime)
+
+        last_year_consumption = queries.get_consumption_for_date(last_year.datetime)
+        last_year_generation = queries.get_generation_for_date(last_year.datetime)
 
         context_data.update(
             {
                 "date": today,
-                "buying": queries.get_purchasing_for_date(today).normalize(),
+                "buying": queries.get_purchasing_for_date(today.datetime).normalize(),
                 "selling": {
                     "kwh": sold_kwh,
                     "fit": settings.FIT,
@@ -35,11 +37,13 @@ class Index(generic.TemplateView):
                 },
                 "generation": {
                     "yesterday": yesterday_generation.normalize(),
-                    "today": queries.get_generation_for_date(today).normalize(),
+                    "today": queries.get_generation_for_date(today.datetime).normalize(),
+                    "last_year": last_year_generation.normalize(),
                 },
                 "consumption": {
                     "yesterday": yesterday_consumption.normalize(),
-                    "today": queries.get_consumption_for_date(today).normalize(),
+                    "today": queries.get_consumption_for_date(today.datetime).normalize(),
+                    "last_year": last_year_consumption.normalize(),
                 },
                 "batteries": self.serialize_battery_summaries(),
                 "all_time_kwh": total_kwh.normalize().quantize(10),

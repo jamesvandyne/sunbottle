@@ -15,6 +15,7 @@ class LineGraphData(serializers.Serializer):
     labels = serializers.ListSerializer(child=serializers.CharField(allow_blank=True))
     yesterday = LineGraphDataset()
     today = LineGraphDataset()
+    last_year_today = LineGraphDataset()
 
 
 class LineGraph(serializers.Serializer):
